@@ -1,0 +1,21 @@
+.{
+    .name = "cmdfile",
+    .version = "0.1.0",
+    .minimum_zig_version = "0.11.0",
+    .dependencies = .{
+        // Add dependencies here as needed
+        // Example:
+        // .yaml = .{
+        //     .url = "https://github.com/example/zig-yaml/archive/main.tar.gz",
+        //     .hash = "...",
+        // },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "test",
+        "README.md",
+        "cmdfile.yaml",
+    },
+}
