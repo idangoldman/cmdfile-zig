@@ -8,6 +8,10 @@ variables:
 
 # Define tasks
 tasks:
+  - name: hello
+    description: "Dude"
+    command: "echo 'HELLO WORLD'"
+
   # Build task
   - name: build
     description: "Build the project"

@@ -6,12 +6,7 @@ const cli = @import("cli.zig");
 // This is the heart of your task runner - similar to how Rake
 // finds and executes tasks, but with explicit error handling
 // and process management that Zig provides
-pub fn executeTask(
-    allocator: std.mem.Allocator,
-    cfg: config.Config,
-    task_name: []const u8,
-    args: [][]const u8
-) !void {
+pub fn executeTask(allocator: std.mem.Allocator, cfg: config.Config, task_name: []const u8, args: [][]const u8) !void {
     // Look up the task in our configuration
     // This is like finding a task in Rake, but we handle the
     // "not found" case explicitly rather than raising an exception
@@ -46,13 +41,7 @@ pub fn executeTask(
     // Execute the command using the appropriate shell
     // This is where Zig's explicit process management shines
     // compared to Ruby's system() or backticks
-    const exit_code = try executeCommand(
-        allocator,
-        full_command,
-        task.shell orelse cfg.settings.shell,
-        task.workdir orelse cfg.settings.workdir,
-        task.env
-    );
+    const exit_code = try executeCommand(allocator, full_command, task.shell orelse cfg.settings.shell, task.workdir orelse cfg.settings.workdir, task.env);
 
     // Handle the exit code appropriately
     // Unlike Ruby where you might check $? after system calls,
@@ -68,11 +57,7 @@ pub fn executeTask(
 // Build the complete command string with arguments
 // This function handles combining the base command with any
 // additional arguments passed on the command line
-fn buildCommand(
-    allocator: std.mem.Allocator,
-    task: *const config.Task,
-    args: [][]const u8
-) ![]u8 {
+fn buildCommand(allocator: std.mem.Allocator, task: *const config.Task, args: [][]const u8) ![]u8 {
     // Start with the base command from the task definition
     var command_parts = std.ArrayList([]const u8).init(allocator);
     defer command_parts.deinit();
@@ -98,7 +83,7 @@ fn buildCommand(
     var pos: usize = 0;
 
     for (command_parts.items, 0..) |part, i| {
-        @memcpy(result[pos..pos + part.len], part);
+        @memcpy(result[pos .. pos + part.len], part);
         pos += part.len;
 
         // Add space between parts (except after the last one)
@@ -115,13 +100,7 @@ fn buildCommand(
 // This is the low-level function that actually runs commands
 // In Ruby you might use system(), ``, or Open3 - here we use
 // Zig's explicit process management for better control
-fn executeCommand(
-    allocator: std.mem.Allocator,
-    command: []const u8,
-    shell: []const u8,
-    workdir: []const u8,
-    env_vars: ?std.StringHashMap([]const u8)
-) !u8 {
+fn executeCommand(allocator: std.mem.Allocator, command: []const u8, shell: []const u8, workdir: []const u8, env_vars: ?std.StringHashMap([]const u8)) !u8 {
     // Prepare the shell command - we run the command through a shell
     // so that features like pipes, redirects, and variable expansion work
     var shell_args = std.ArrayList([]const u8).init(allocator);
@@ -149,7 +128,16 @@ fn executeCommand(
         defer env_map.deinit();
 
         // Start with the current environment
-        try env_map.inherit(allocator);
+        var env_iterator = std.process.getEnvMap(allocator) catch |err| {
+            std.log.warn("Failed to get environment variables: {}", .{err});
+            return 1; // Return error exit code
+        };
+        defer env_iterator.deinit();
+
+        var current_env_iterator = env_iterator.iterator();
+        while (current_env_iterator.next()) |entry| {
+            try env_map.put(entry.key_ptr.*, entry.value_ptr.*);
+        }
 
         // Add or override with task-specific variables
         var var_iterator = vars.iterator();
@@ -176,15 +164,15 @@ fn executeCommand(
         .Exited => |code| return code,
         .Signal => |signal| {
             try cli.printError("Process terminated by signal: {d}", .{signal});
-            return 128 + signal; // Standard Unix convention for signal exits
+            return 128; // Standard signal exit code
         },
         .Stopped => |signal| {
             try cli.printError("Process stopped by signal: {d}", .{signal});
-            return 128 + signal;
+            return 128; // Standard signal exit code
         },
         .Unknown => |code| {
             try cli.printError("Process exited with unknown status: {d}", .{code});
-            return @intCast(code);
+            return @intCast(@min(code, 255));
         },
     }
 }
@@ -207,10 +195,10 @@ fn askForConfirmation(allocator: std.mem.Allocator, task_name: []const u8) !bool
 
         // Accept 'y', 'Y', 'yes', 'Yes', etc.
         return std.mem.eql(u8, trimmed, "y") or
-               std.mem.eql(u8, trimmed, "Y") or
-               std.mem.eql(u8, trimmed, "yes") or
-               std.mem.eql(u8, trimmed, "Yes") or
-               std.mem.eql(u8, trimmed, "YES");
+            std.mem.eql(u8, trimmed, "Y") or
+            std.mem.eql(u8, trimmed, "yes") or
+            std.mem.eql(u8, trimmed, "Yes") or
+            std.mem.eql(u8, trimmed, "YES");
     }
 
     return false; // Default to no if no input or EOF
@@ -304,7 +292,6 @@ test "build command with arguments" {
 }
 
 test "validate existing task" {
-    const testing = std.testing;
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     const allocator = gpa.allocator();

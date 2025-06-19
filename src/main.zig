@@ -12,7 +12,7 @@ pub fn main() !void {
     // an allocator - think of this as managing your own memory
     // pool instead of relying on Ruby's garbage collector.
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer gpa.deinit(); // This runs when the function exits, like Ruby's ensure
+    defer _ = gpa.deinit(); // This runs when the function exits, like Ruby's ensure
 
     const allocator = gpa.allocator();
 
@@ -53,9 +53,9 @@ pub fn main() !void {
     // Load configuration - this is like loading your Rakefile
     // but we're explicit about where it comes from and handle
     // the case where it doesn't exist
-    const cfg = config.loadConfig(allocator) catch |err| switch (err) {
+    var cfg = config.loadConfig(allocator) catch |err| switch (err) {
         error.FileNotFound => {
-            try cli.printError("No cmdfile.yaml found. Run 'cmdfile init' to create one.");
+            try cli.printError("No cmdfile.yaml found. Run 'cmdfile init' to create one.", .{});
             return;
         },
         else => return err, // Re-throw other errors
@@ -65,7 +65,15 @@ pub fn main() !void {
     // Execute the requested task - this is the core of your task runner
     // Similar to how rake finds and executes tasks, but with explicit
     // error handling and memory management
-    task_runner.executeTask(allocator, cfg, command, args[2..]) catch |err| switch (err) {
+
+    // Convert [:0]u8 args to []const u8 args for the task runner
+    const task_args = try allocator.alloc([]const u8, args[2..].len);
+    defer allocator.free(task_args);
+    for (args[2..], 0..) |arg, i| {
+        task_args[i] = arg[0..];
+    }
+
+    task_runner.executeTask(allocator, cfg, command, task_args) catch |err| switch (err) {
         error.TaskNotFound => {
             try cli.printError("Task not found: {s}", .{command});
             try cli.printAvailableTasks(cfg);

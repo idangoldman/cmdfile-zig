@@ -7,11 +7,11 @@ const std = @import("std");
 
 // A single task definition - like a Rake task but with explicit fields
 pub const Task = struct {
-    description: ?[]const u8 = null,  // Optional description string
-    command: []const u8,              // The actual command to execute
-    confirm: bool = false,            // Whether to ask for confirmation
-    workdir: ?[]const u8 = null,      // Working directory for this task
-    shell: ?[]const u8 = null,        // Shell to use for this task
+    description: ?[]const u8 = null, // Optional description string
+    command: []const u8, // The actual command to execute
+    confirm: bool = false, // Whether to ask for confirmation
+    workdir: ?[]const u8 = null, // Working directory for this task
+    shell: ?[]const u8 = null, // Shell to use for this task
     env: ?std.StringHashMap([]const u8) = null, // Environment variables
 
     // Memory cleanup function - this is explicit in Zig whereas
@@ -96,10 +96,7 @@ pub fn loadConfig(allocator: std.mem.Allocator) !Config {
 
     // Read the configuration file - explicit file handling instead
     // of Ruby's automatic file reading with blocks
-    const file_content = std.fs.cwd().readFileAlloc(
-        allocator,
-        "cmdfile.yaml",
-        1024 * 1024 // 1MB max file size
+    const file_content = std.fs.cwd().readFileAlloc(allocator, "cmdfile.yaml", 1024 * 1024 // 1MB max file size
     ) catch |err| switch (err) {
         error.FileNotFound => return error.FileNotFound,
         else => return err,
@@ -118,7 +115,7 @@ pub fn loadConfig(allocator: std.mem.Allocator) !Config {
 // explicit than Ruby's YAML library, but gives us full control
 // over parsing and memory allocation
 fn parseYamlConfig(config: *Config, content: []const u8) !void {
-    var lines = std.mem.split(u8, content, "\n");
+    var lines = std.mem.splitSequence(u8, content, "\n");
     var current_section: ?[]const u8 = null;
     var current_task_name: ?[]const u8 = null;
     var current_task: ?Task = null;
@@ -138,7 +135,7 @@ fn parseYamlConfig(config: *Config, content: []const u8) !void {
                 current_task = null;
             }
 
-            current_section = trimmed[0..trimmed.len-1]; // Remove the ':'
+            current_section = trimmed[0 .. trimmed.len - 1]; // Remove the ':'
             continue;
         }
 
@@ -151,7 +148,7 @@ fn parseYamlConfig(config: *Config, content: []const u8) !void {
                 }
 
                 // Start new task
-                const task_name = std.mem.trim(u8, trimmed[2..trimmed.len-1], " ");
+                const task_name = std.mem.trim(u8, trimmed[2 .. trimmed.len - 1], " ");
                 current_task_name = task_name;
                 current_task = Task{ .command = "" }; // Will be set by command: line
                 continue;
@@ -166,7 +163,7 @@ fn parseYamlConfig(config: *Config, content: []const u8) !void {
                     if (desc_start != null) {
                         const desc_end = std.mem.lastIndexOf(u8, property_line, "\"");
                         if (desc_end != null and desc_end.? > desc_start.?) {
-                            const description = property_line[desc_start.?+1..desc_end.?];
+                            const description = property_line[desc_start.? + 1 .. desc_end.?];
                             current_task.?.description = try config.allocator.dupe(u8, description);
                         }
                     }
@@ -175,7 +172,7 @@ fn parseYamlConfig(config: *Config, content: []const u8) !void {
                     if (cmd_start != null) {
                         const cmd_end = std.mem.lastIndexOf(u8, property_line, "\"");
                         if (cmd_end != null and cmd_end.? > cmd_start.?) {
-                            const command = property_line[cmd_start.?+1..cmd_end.?];
+                            const command = property_line[cmd_start.? + 1 .. cmd_end.?];
                             current_task.?.command = try config.allocator.dupe(u8, command);
                         }
                     }
@@ -196,7 +193,7 @@ fn parseYamlConfig(config: *Config, content: []const u8) !void {
                     if (shell_start != null) {
                         const shell_end = std.mem.lastIndexOf(u8, setting_line, "\"");
                         if (shell_end != null and shell_end.? > shell_start.?) {
-                            const shell = setting_line[shell_start.?+1..shell_end.?];
+                            const shell = setting_line[shell_start.? + 1 .. shell_end.?];
                             config.settings.shell = try config.allocator.dupe(u8, shell);
                         }
                     }
@@ -205,7 +202,7 @@ fn parseYamlConfig(config: *Config, content: []const u8) !void {
                     if (workdir_start != null) {
                         const workdir_end = std.mem.lastIndexOf(u8, setting_line, "\"");
                         if (workdir_end != null and workdir_end.? > workdir_start.?) {
-                            const workdir = setting_line[workdir_start.?+1..workdir_end.?];
+                            const workdir = setting_line[workdir_start.? + 1 .. workdir_end.?];
                             config.settings.workdir = try config.allocator.dupe(u8, workdir);
                         }
                     }

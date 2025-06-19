@@ -28,36 +28,36 @@ const Colors = struct {
 pub fn printUsage() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("{s}{s}Usage:{s} {s} <command> [arguments]\n", .{ Colors.bold, Colors.cyan, Colors.reset, PROGRAM_NAME });
-    try stdout.print("\n");
-    try stdout.print("Common commands:\n");
+    try stdout.print("\n", .{});
+    try stdout.print("Common commands:\n", .{});
     try stdout.print("  {s}help{s}     Show detailed help information\n", .{ Colors.green, Colors.reset });
     try stdout.print("  {s}init{s}     Create a new cmdfile.yaml configuration\n", .{ Colors.green, Colors.reset });
     try stdout.print("  {s}version{s}  Show version information\n", .{ Colors.green, Colors.reset });
-    try stdout.print("\n");
+    try stdout.print("\n", .{});
     try stdout.print("Run '{s} help' for more detailed information.\n", .{PROGRAM_NAME});
 }
 
 pub fn printHelp() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("{s}{s}{s} - A Simple Task Runner{s}\n", .{ Colors.bold, Colors.magenta, PROGRAM_NAME, Colors.reset });
-    try stdout.print("\n");
+    try stdout.print("\n", .{});
     try stdout.print("{s}DESCRIPTION:{s}\n", .{ Colors.bold, Colors.reset });
-    try stdout.print("  cmdfile is a task runner that reads commands from a cmdfile.yaml\n");
-    try stdout.print("  configuration file. It's designed to simplify common development\n");
-    try stdout.print("  workflows, similar to how Rake simplifies Ruby task management.\n");
-    try stdout.print("\n");
+    try stdout.print("  cmdfile is a task runner that reads commands from a cmdfile.yaml\n", .{});
+    try stdout.print("  configuration file. It's designed to simplify common development\n", .{});
+    try stdout.print("  workflows, similar to how Rake simplifies Ruby task management.\n", .{});
+    try stdout.print("\n", .{});
     try stdout.print("{s}USAGE:{s}\n", .{ Colors.bold, Colors.reset });
     try stdout.print("  {s} <command> [arguments]\n", .{PROGRAM_NAME});
-    try stdout.print("\n");
+    try stdout.print("\n", .{});
     try stdout.print("{s}BUILT-IN COMMANDS:{s}\n", .{ Colors.bold, Colors.reset });
     try stdout.print("  {s}help{s}         Show this help message\n", .{ Colors.green, Colors.reset });
     try stdout.print("  {s}version{s}      Show version information\n", .{ Colors.green, Colors.reset });
     try stdout.print("  {s}init{s}         Create a new cmdfile.yaml configuration file\n", .{ Colors.green, Colors.reset });
-    try stdout.print("\n");
+    try stdout.print("\n", .{});
     try stdout.print("{s}CONFIGURATION:{s}\n", .{ Colors.bold, Colors.reset });
-    try stdout.print("  cmdfile looks for a 'cmdfile.yaml' file in the current directory.\n");
-    try stdout.print("  This file defines your available tasks and their commands.\n");
-    try stdout.print("\n");
+    try stdout.print("  cmdfile looks for a 'cmdfile.yaml' file in the current directory.\n", .{});
+    try stdout.print("  This file defines your available tasks and their commands.\n", .{});
+    try stdout.print("\n", .{});
     try stdout.print("{s}EXAMPLES:{s}\n", .{ Colors.bold, Colors.reset });
     try stdout.print("  {s} init          # Create a new configuration file\n", .{PROGRAM_NAME});
     try stdout.print("  {s} build         # Run the 'build' task from cmdfile.yaml\n", .{PROGRAM_NAME});
@@ -75,21 +75,21 @@ pub fn printError(comptime fmt: []const u8, args: anytype) !void {
     const stderr = std.io.getStdErr().writer();
     try stderr.print("{s}Error:{s} ", .{ Colors.red, Colors.reset });
     try stderr.print(fmt, args);
-    try stderr.print("\n");
+    try stderr.print("\n", .{});
 }
 
 pub fn printSuccess(comptime fmt: []const u8, args: anytype) !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("{s}Success:{s} ", .{ Colors.green, Colors.reset });
     try stdout.print(fmt, args);
-    try stdout.print("\n");
+    try stdout.print("\n", .{});
 }
 
 pub fn printWarning(comptime fmt: []const u8, args: anytype) !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("{s}Warning:{s} ", .{ Colors.yellow, Colors.reset });
     try stdout.print(fmt, args);
-    try stdout.print("\n");
+    try stdout.print("\n", .{});
 }
 
 // Initialize a new project with a sample configuration file
@@ -160,15 +160,15 @@ pub fn initProject(allocator: std.mem.Allocator) !void {
     };
 
     try printSuccess("Created cmdfile.yaml with sample tasks", .{});
-    try stdout.print("\n");
-    try stdout.print("Available tasks:\n");
+    try stdout.print("\n", .{});
+    try stdout.print("Available tasks:\n", .{});
     try stdout.print("  {s}build{s}   - Build the project\n", .{ Colors.cyan, Colors.reset });
     try stdout.print("  {s}test{s}    - Run tests\n", .{ Colors.cyan, Colors.reset });
     try stdout.print("  {s}clean{s}   - Clean build artifacts\n", .{ Colors.cyan, Colors.reset });
     try stdout.print("  {s}dev{s}     - Start development server\n", .{ Colors.cyan, Colors.reset });
     try stdout.print("  {s}deploy{s}  - Deploy to production\n", .{ Colors.cyan, Colors.reset });
-    try stdout.print("\n");
-    try stdout.print("Edit cmdfile.yaml to customize these tasks for your project.\n");
+    try stdout.print("\n", .{});
+    try stdout.print("Edit cmdfile.yaml to customize these tasks for your project.\n", .{});
 }
 
 // Display available tasks from the configuration
@@ -190,7 +190,7 @@ pub fn printAvailableTasks(cfg: config.Config) !void {
             try stdout.print(" - {s}", .{desc});
         }
 
-        try stdout.print("\n");
+        try stdout.print("\n", .{});
     }
 }
 
