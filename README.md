@@ -321,3 +321,11 @@ cmdfile validate --config-file test/fixtures/valid.yml
 ## License
 
 MIT License - see [LICENSE](LICENSE) file.
+
+
+## TODOs
+
+- migration from other task/command/script runner config files.
+- templates for various language, framework, development environment, etc setups.
+- move from YAML to TOML config file based on.
+
