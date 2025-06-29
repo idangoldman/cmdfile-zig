@@ -3,13 +3,13 @@
 [![CMDFILE Version](https://img.shields.io/badge/cmdfile-0.0.1-green.svg)](https://github.com/idangoldman/cmdfile/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A high-performance task runner written in Zig that simplifies development workflows through declarative YAML configuration and intelligent dependency resolution.
+A high-performance task runner written in Zig that simplifies development workflows through declarative TOML configuration and intelligent dependency resolution.
 
 ## Why cmdfile?
 
 **Performance**: Native compiled binary with zero startup overhead and minimal memory footprint. Built with Zig for maximum efficiency.
 
-**Simplicity**: Clean YAML syntax without the complexity of Makefiles or language-specific DSLs.
+**Simplicity**: Clean TOML syntax without the complexity of Makefiles or language-specific DSLs.
 
 **Intelligence**: Automatic dependency resolution with parallel execution and cycle detection.
 
@@ -20,12 +20,18 @@ A high-performance task runner written in Zig that simplifies development workfl
 | Feature | cmdfile | Make | Just | Taskfile |
 |---------|---------|------|------|----------|
 | Language | Zig | C | Rust | Go |
-| Config Format | YAML | Makefile | Justfile | YAML |
-| Startup Time | <1ms | <5ms | ~10ms | ~15ms |
-| Memory Usage | <2MB | <5MB | ~8MB | ~12MB |
+| Config Format | TOML | Makefile | Justfile | YAML |
+| Cross-platform | ✅ | ✅ | ✅ | ✅ |
 | Dependencies | ✅ | ✅ | ✅ | ✅ |
+| Environment Variables | ✅ | ✅ | ✅ | ✅ |
+| Error Handling | ✅ | ❌ | ❌ | ✅ |
 | File Watching | ✅ | ❌ | ❌ | ✅ |
+| Interactive Prompts | ✅ | ❌ | ❌ | ✅ |
 | Parallel Execution | ✅ | ✅ | ❌ | ✅ |
+| Sequence Control | ✅ | ❌ | ❌ | ✅ |
+| Shell Support | ✅ | ✅ | ✅ | ✅ |
+| Task Validation | ✅ | ❌ | ❌ | ✅ |
+| Variable Substitution | ✅ | ❌ | ✅ | ✅ |
 
 ## Installation
 
@@ -68,19 +74,19 @@ cmdfile <command> [task_name] [--flag[=value]...] [variable=value...] [ENVIRONME
 
 | Command    | Description                             |
 | ---------- | --------------------------------------- |
-| `dump`.    | Dump the current configuration in YAML format |
+| `dump`     | Dump the current configuration in TOML format |
 | `help`     | Show help message or command help       |
-| `init`     | Create an initial cmdfile.yml           |
+| `init`     | Create an initial cmdfile.toml           |
 | `list`     | List all available tasks                |
 | `task`     | Execute the specified task              |
-| `validate` | Validate the cmdfile.yml configuration  |
+| `validate` | Validate the cmdfile.toml configuration  |
 | `version`  | Show cmdfile installed version          |
 
 ### Flags
 
 | Flag            | Description                                            |
 | --------------- | ------------------------------------------------------ |
-| `--config-file` | Set `cmdfile.yml` configuration file path              |
+| `--config-file` | Set `cmdfile.toml` configuration file path              |
 | `--dry-run`     | Show execution plan without running commands           |
 | `--env-file`    | Load environment variables from specified .env file    |
 | `--sudo`        | Run commands with administrative permissions           |
@@ -94,11 +100,11 @@ cmdfile <command> [task_name] [--flag[=value]...] [variable=value...] [ENVIRONME
 
 ### File Structure
 
-```yaml
-defaults:     # Global settings for all tasks
-environment:  # Environment variables
-variables:    # Reusable template values
-tasks:        # Task definitions with commands and dependencies
+```toml
+[defaults]     # Global settings for all tasks
+[environment]  # Environment variables
+[variables]    # Reusable template values
+[tasks]        # Task definitions with commands and dependencies
 ```
 
 ### Defaults Section
@@ -162,122 +168,129 @@ Comprehensive validation with clear error messages for configuration issues, mis
 
 ### Simple Project
 
-```yaml
-defaults:
-  shell: /bin/bash
+```toml
+[defaults]
+shell = "/bin/bash"
 
-variables:
-  src_dir: src
-  build_dir: dist
+[variables]
+src_dir = "src"
+build_dir = "dist"
 
-environment:
-  NODE_ENV: development
+[environment]
+NODE_ENV = "development"
 
-tasks:
-  clean:
-    description: "Remove build artifacts"
-    command: rm -rf ${build_dir}
+[tasks.clean]
+description = "Remove build artifacts"
+command = "rm -rf ${build_dir}"
 
-  build:
-    description: "Build the project"
-    command: npm run build
-    dependencies: [clean]
+[tasks.build]
+description = "Build the project"
+command = "npm run build"
+dependencies = ["clean"]
+watch = ["${src_dir}/**/*.{js,ts,css}"]
 
-  test:
-    description: "Run test suite"
-    command: npm test
-    dependencies: [build]
+[tasks.install]
+description = "Install project dependencies"
+command = "npm install"
+dependencies = ["clean"]
+
+[tasks.test]
+description = "Run test suite"
+command = "npm test"
+dependencies = ["build"]
 ```
 
 ### Complex Rails Application
 
-```yaml
-defaults:
-  env_file: true
-  shell: /bin/bash
-  work_dir: .
+```toml
+[defaults]
+env_file = true
+shell = "/bin/bash"
+work_dir = "."
 
-variables:
-  app_name: "myapp"
-  rails_env: "development"
+[variables]
+app_name = "myapp"
+rails_env = "development"
 
-environment:
-  RAILS_ENV: ${rails_env}
-  DATABASE_URL: "postgresql://localhost/${app_name}_${rails_env}"
+[environment]
+RAILS_ENV = "${rails_env}"
+DATABASE_URL = "postgresql://localhost/${app_name}_${rails_env}"
 
-tasks:
-  setup:
-    description: "Complete development environment setup"
-    dependencies: [install:gems, install:js, db:setup]
+[tasks.setup]
+description = "Complete development environment setup"
+dependencies = ["install.gems", "install.js", "db.setup"]
 
-  install:
-    description: "Install all dependencies"
-    sequence: parallel
-    dependencies: [install:gems, install:js]
+[tasks.install]
+description = "Install all dependencies"
+sequence = "parallel"
+dependencies = ["install.gems", "install.js"]
 
-  install:gems:
-    description: "Install Ruby dependencies"
-    command: bundle install
+[tasks.install.gems]
+description = "Install Ruby dependencies"
+command = "bundle install"
 
-  install:js:
-    description: "Install JavaScript dependencies"
-    command: npm install
+[tasks.install.js]
+description = "Install JavaScript dependencies"
+command = "npm install"
 
-  db:setup:
-    description: "Create and seed database"
-    command: rails db:create db:migrate db:seed
+[tasks.db.setup]
+description = "Create and seed database"
+command = "rails db:create db:migrate db:seed"
 
-  test:
-    description: "Run complete test suite"
-    dependencies: [test:unit, test:integration]
+[tasks.test]
+description = "Run complete test suite"
+dependencies = ["test.unit", "test.integration"]
 
-  test:unit:
-    description: "Run unit tests"
-    command: rails test:units
-    environment:
-      RAILS_ENV: test
+[tasks.test.unit]
+description = "Run unit tests"
+command = "rails test:units"
+environment = { RAILS_ENV = "test" }
 
-  test:integration:
-    description: "Run integration tests"
-    command: rails test:integration
-    environment:
-      RAILS_ENV: test
+[tasks.test.integration]
+description = "Run integration tests"
+command = "rails test:integration"
+environment = { RAILS_ENV = "test" }
 
-  assets:build:
-    description: "Compile production assets"
-    command: rails assets:precompile
-    environment:
-      RAILS_ENV: production
+[tasks.assets.build]
+description = "Compile production assets"
+command = "rails assets:precompile"
 
-  assets:watch:
-    description: "Watch and rebuild assets"
-    command: rails assets:precompile
-    watch:
-      - "app/assets/**/*.{scss,js,coffee}"
-      - "app/javascript/**/*.{js,ts}"
+[tasks.assets.build.environment]
+RAILS_ENV = "production"
 
-  setup:mysql:
-    description: "Install and configure MySQL"
-    command: brew install mysql
-    prompts:
-      "Install MySQL binary? [y/N]": "y"
-      "Start MySQL service now? [y/N]": "y"
+[tasks.assets.watch]
+description = "Watch and rebuild assets"
+command = "rails assets:precompile"
+watch = [
+  "app/assets/**/*.{scss,js,coffee}",
+  "app/javascript/**/*.{js,ts}"
+]
 
-  deploy:staging:
-    description: "Deploy to staging environment"
-    command: cap staging deploy
-    dependencies: [test, assets:build]
-    confirm: true
+[tasks.setup.mysql]
+description = "Install and configure MySQL"
+command = "brew install mysql"
 
-  deploy:production:
-    description: "Deploy to production environment"
-    command: cap production deploy
-    dependencies: [test, assets:build]
-    confirm: true
-    prompts:
-      "Deploy to PRODUCTION? This affects live users [y/N]": "y"
-    environment:
-      RAILS_ENV: production
+[tasks.setup.mysql.prompts]
+"Install MySQL binary? [y/N]" = "y"
+"Start MySQL service now? [y/N]" = "y"
+
+[tasks.deploy.staging]
+description = "Deploy to staging environment"
+command = "cap staging deploy"
+dependencies = ["test", "assets.build"]
+confirm = true
+
+[tasks.deploy.production]
+description = "Deploy to production environment"
+command = "cap production deploy"
+dependencies = ["test", "assets.build"]
+confirm = true
+
+[tasks.deploy.production.prompts]
+"Deploy to PRODUCTION? This affects live users [y/N]" = "y"
+
+[tasks.deploy.production.environment]
+RAILS_ENV = "production"
 ```
 
 ## Contributing
@@ -315,21 +328,19 @@ zig test test/config_test.zig
 zig test test/task_runner_test.zig
 
 # Test configuration validation
-cmdfile validate --config-file test/fixtures/valid.yml
+cmdfile validate --config-file test/fixtures/valid.toml
 ```
 
 ## License
 
 MIT License - see [LICENSE](LICENSE) file.
 
-
 ## TODOs
 
 - migration from other task/command/script runner config files.
 - templates for various language, framework, development environment, etc setups.
-- move from YAML to TOML config file based on.
-- tab completion 
+- migration from YAML to TOML config file based on.
+- tab completion
 - `tasks.tests` will execute tasks grouped in sequence and order they are in the config file
 - sequence option values: serial, parallel, pipe, and, semi.
 - features: configuration format, dependencies sequence,variables and environment variables, command execution errors, help documentation, cross platform shell execution, task validation, file watching.
-
