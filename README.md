@@ -329,4 +329,6 @@ MIT License - see [LICENSE](LICENSE) file.
 - templates for various language, framework, development environment, etc setups.
 - move from YAML to TOML config file based on.
 - tab completion 
+- `tasks.tests` will execute tasks grouped in sequence and order they are in the config file
+- sequence option values: serial, parallel, pipe, and, semi.
 
