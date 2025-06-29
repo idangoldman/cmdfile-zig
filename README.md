@@ -331,4 +331,5 @@ MIT License - see [LICENSE](LICENSE) file.
 - tab completion 
 - `tasks.tests` will execute tasks grouped in sequence and order they are in the config file
 - sequence option values: serial, parallel, pipe, and, semi.
+- features: configuration format, dependencies sequence,variables and environment variables, command execution errors, help documentation, cross platform shell execution, task validation, file watching.
 
