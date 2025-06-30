@@ -1,0 +1,81 @@
+[[schema.examples]]
+name = "basic_build_configuration"
+description = "Simple build and test workflow"
+
+[schema.examples.0.config]
+[schema.examples.0.config.defaults]
+shell = "/bin/bash"
+work_dir = "."
+
+[schema.examples.0.config.variables]
+project_name = "my-app"
+build_dir = "dist"
+
+[schema.examples.0.config.environment]
+NODE_ENV = "development"
+
+[schema.examples.0.config.tasks]
+
+[schema.examples.0.config.tasks.build]
+command = "npm run build"
+description = "Build the application"
+work_dir = "."
+
+[schema.examples.0.config.tasks.test]
+command = "npm test"
+description = "Run test suite"
+dependencies = ["build"]
+
+[schema.examples.0.config.tasks.clean]
+command = "rm -rf ${build_dir}"
+description = "Clean build artifacts"
+confirm = true
+destructive = true
+
+[[schema.examples]]
+name = "advanced_deployment_workflow"
+description = "Complex deployment with environment-specific settings"
+
+[schema.examples.1.config]
+[schema.examples.1.config.defaults]
+shell = "/bin/bash"
+confirm_destructive = true
+
+[schema.examples.1.config.variables]
+app_name = "production-app"
+version = "1.0.0"
+
+[schema.examples.1.config.tasks]
+
+[schema.examples.1.config.tasks.prepare]
+command = "echo 'Preparing deployment for ${app_name} v${version}'"
+description = "Prepare deployment environment"
+
+[schema.examples.1.config.tasks.deploy]
+command = "kubectl apply -f deployment.yaml"
+description = "Deploy to Kubernetes"
+dependencies = ["prepare"]
+timeout = "10m"
+confirm = true
+
+[schema.examples.1.config.tasks.verify]
+command = "kubectl rollout status deployment/${app_name}"
+description = "Verify deployment success"
+dependencies = ["deploy"]
+timeout = "5m"
+
+[schema.examples.1.config.environments]
+
+[schema.examples.1.config.environments.development]
+[schema.examples.1.config.environments.development.variables]
+app_name = "dev-app"
+
+[schema.examples.1.config.environments.development.environment]
+ENVIRONMENT = "development"
+
+[schema.examples.1.config.environments.production]
+[schema.examples.1.config.environments.production.variables]
+app_name = "prod-app"
+
+[schema.examples.1.config.environments.production.environment]
+ENVIRONMENT = "production"
