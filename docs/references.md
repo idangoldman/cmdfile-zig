@@ -11,3 +11,6 @@ TOML parser libraries in Zig
 
 - <https://github.com/sam701/zig-toml>
 - <https://github.com/mattyhall/tomlz>
+
+JSON Schema validation in Zig
+<https://github.com/pascalPost/json-schema-validator>
