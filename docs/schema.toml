@@ -48,7 +48,6 @@ default = false
 type = "integer"
 description = "Maximum number of tasks to run in parallel"
 minimum = 1
-maximum = 32
 default = 4
 
 # Variables section for template substitution
@@ -95,18 +94,9 @@ required = true
 min_length = 1
 examples = ["echo 'Hello, World!'", "npm run build", "python script.py"]
 
-[schema.tasks.task_definition.properties.commands]
-type = "array"
-description = "List of shell commands to execute in sequence"
-required = false
-item_type = "string"
-item_min_length = 2
-item_pattern = "^[^\\0]+$"
-examples = ["echo 'Step 1'", "echo 'Step 2'"]
-
 [schema.tasks.task_definition.properties.sequence]
 type = "string"
-description = "Sequence of commands to execute, using a shell command syntax"
+description = "Sequence of dependency execution"
 required = false
 enum = ["serial", "parallel", "pipeline", "sequential", "and", "or"]
 examples = ["serial", "parallel", "pipeline"]
