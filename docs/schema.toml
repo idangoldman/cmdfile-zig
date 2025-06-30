@@ -38,12 +38,6 @@ pattern = "^[^\\0]*$"
 required = false
 unique = true
 
-[schema.global.properties.confirm_distructive]
-type = "boolean"
-description = "Require confirmation for tasks marked as destructive"
-required = false
-default = false
-
 [schema.global.properties.parallel_limit]
 type = "integer"
 description = "Maximum number of tasks to run in parallel"
@@ -77,7 +71,7 @@ unique_keys = true
 description = "Task definitions"
 required = true
 type = "object"
-key_pattern = "^[a-zA-Z_][a-zA-Z0-9_\\-]*$"
+key_pattern = "^[a-z_][a-z0-9_]{1,64}$"
 value_type = "task_definition"
 min_properties = 1
 unique_keys = true
@@ -113,7 +107,7 @@ type = "array"
 description = "Tasks that must complete successfully before this task runs"
 required = false
 item_type = "string"
-item_pattern = "^[a-zA-Z_][a-zA-Z0-9_\\-]*$"
+item_pattern = "^[a-z_][a-z0-9_]{1,64}$"
 examples = ["build", "test"]
 unique_items = true
 
@@ -128,12 +122,6 @@ reference = "schema.global.properties.work_dir"
 [schema.tasks.task_definition.properties.confirm]
 type = "boolean"
 description = "Require user confirmation before executing this task"
-required = false
-default = false
-
-[schema.tasks.task_definition.properties.destructive]
-type = "boolean"
-description = "Mark this task as potentially destructive"
 required = false
 default = false
 
@@ -180,7 +168,7 @@ reference = "schema.environment"
 type = "array"
 description = "File patterns to watch for automatic task re-execution"
 required = false
-examples = ["src/**/*.js", "config/*.json"]
+examples = ["src/**/*.{js,ts}", "docs/*.md", "src/**/*.css"]
 item_pattern = "^[^\\0]+$"
 item_description = "File pattern to watch"
 item_type = "string"
