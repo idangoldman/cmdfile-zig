@@ -2,8 +2,8 @@
 # This file defines the validation rules and structure for cmdfile.toml configuration files
 
 [schema]
-version = "0.0.1"
 description = "Schema definition for cmdfile TOML configuration files"
+version = "0.0.1"
 
 # Global default settings section
 [schema.global]
@@ -11,60 +11,24 @@ description = "Global default settings that apply to all tasks"
 required = false
 
 [schema.global.properties.shell]
-type = "string"
-description = "Default shell for command execution"
-default = "/bin/bash"
-examples = ["/bin/bash", "/bin/sh", "powershell", "cmd", "zsh", "fish"]
-pattern = "^[^\\0]*$"
+ref = "definitions.shell"
 
 [schema.global.properties.work_dir]
-type = "string"
-description = "Default working directory for task execution"
-default = "."
-pattern = "^[^\\0]*$"
-examples = [".", "/path/to/workdir"]
+ref = "definitions.work_dir"
 
 [schema.global.properties.env_file]
-type = "boolean"
-description = "Whether to automatically load .env file"
-default = false
+ref = "definitions.env_file"
 
 [schema.global.properties.env_file_path]
-type = "string"
-description = "Path to the .env file to load"
-default = ".env"
-examples = [".env", "/path/to/.env"]
-pattern = "^[^\\0]*$"
-required = false
-unique = true
-
-[schema.global.properties.parallel_limit]
-type = "integer"
-description = "Maximum number of tasks to run in parallel"
-minimum = 1
-default = 4
+ref = "definitions.env_file_path"
 
 # Variables section for template substitution
 [schema.variables]
-description = "Global variables available to all tasks using ${variable_name} syntax, limiting to alphanumeric and underscore characters, starting with a letter or underscore, and between 2 and 64 characters long"
-type = "object"
-exmples = ["${project_name}", "${version}"]
-required = false
-key_pattern = "^[a-z_][a-z0-9_]{1,64}$"
-value_type = "string"
-min_properties = 1
-unique_keys = true
+ref = "definitions.variables"
 
 # Environment variables section
 [schema.environment]
-description = "Global environment variables for all tasks, using uppercase letters, underscores, and digits, starting with a letter or underscore, and between 2 and 64 characters long"
-examples = ["${PATH}", "${HOME}", "${USER}"]
-required = false
-type = "object"
-key_pattern = "^[A-Z_][A-Z0-9_]{1,64}$"
-value_type = "string"
-min_properties = 1
-unique_keys = true
+ref = "definitions.environment"
 
 # Tasks section - core functionality
 [schema.tasks]
@@ -87,15 +51,7 @@ description = "Shell command to execute"
 required = true
 min_length = 1
 examples = ["echo 'Hello, World!'", "npm run build", "python script.py"]
-
-[schema.tasks.task_definition.properties.sequence]
-type = "string"
-description = "Sequence of dependency execution"
-required = false
-enum = ["serial", "parallel", "pipeline", "sequential", "and", "or"]
-examples = ["serial", "parallel", "pipeline"]
-pattern = "^(serial|parallel|pipeline|sequential|and|or)$"
-default = "serial"
+pattern = "^[^\\0]+$"
 
 [schema.tasks.task_definition.properties.description]
 type = "string"
@@ -113,64 +69,58 @@ unique_items = true
 
 [schema.tasks.task_definition.properties.shell]
 description = "Override global shell for this task"
-reference = "schema.global.properties.shell"
+ref = "definitions.shell"
 
 [schema.tasks.task_definition.properties.work_dir]
 description = "Override default working directory for this task"
-reference = "schema.global.properties.work_dir"
-
-[schema.tasks.task_definition.properties.confirm]
-type = "boolean"
-description = "Require user confirmation before executing this task"
-required = false
-default = false
-
-[schema.tasks.task_definition.properties.timeout]
-type = "string"
-description = "Maximum execution time for the task"
-examples = ["5m", "30s", "2h"]
-required = false
-pattern = "^[0-9]+[smh]$"
-
-[schema.tasks.task_definition.properties.retry]
-type = "object"
-description = "Retry configuration for failed tasks"
-required = false
-
-[schema.tasks.task_definition.properties.retry.properties.count]
-type = "integer"
-description = "Number of retry attempts"
-examples = [0, 3, 5]
-required = false
-minimum = 0
-maximum = 10
-default = 0
-pattern = "^[0-9]+$"
-
-[schema.tasks.task_definition.properties.retry.properties.delay]
-type = "string"
-description = "Delay between retry attempts"
-examples = ["5s", "1m", "10m"]
-default = "0s"
-required = false
-pattern = "^[0-9]+[smh]$"
-min_length = 2
+ref = "definitions.work_dir"
 
 [schema.tasks.task_definition.properties.variables]
 description = "Task-specific variables, overriding global variables"
-reference = "schema.variables"
+ref = "definitions.variables"
 
 [schema.tasks.task_definition.properties.environment]
 description = "Task-specific environment variables, overriding global environment variables"
-reference = "schema.environment"
+ref = "definitions.environment"
 
-[schema.tasks.task_definition.properties.watch]
-type = "array"
-description = "File patterns to watch for automatic task re-execution"
-required = false
-examples = ["src/**/*.{js,ts}", "docs/*.md", "src/**/*.css"]
-item_pattern = "^[^\\0]+$"
-item_description = "File pattern to watch"
-item_type = "string"
-unique_items = true
-min_items = 1
+[definitions.shell]
+type = "string"
+description = "Shell to use for command execution"
+examples = ["/bin/bash", "/bin/sh", "powershell", "cmd", "zsh", "fish"]
+pattern = "^[^\\0]*$"
+
+[definitions.work_dir]
+type = "string"
+description = "Working directory for task execution"
+examples = [".", "/path/to/workdir"]
+pattern = "^[^\\0]*$"
+
+[definitions.env_file]
+type = "boolean"
+description = "Whether to automatically load .env file"
+default = false
+
+[definitions.env_file_path]
+type = "string"
+description = "Path to the .env file to load"
+default = ".env"
+examples = [".env", "/path/to/.env"]
+pattern = "^[^\\0]*$"
+
+[definitions.variables]
+type = "object"
+description = "Global variables available to all tasks using ${variable_name} syntax, limiting to alphanumeric and underscore characters, starting with a letter or underscore, and between 2 and 64 characters long"
+examples = ["${project_name}", "${version}"]
+key_pattern = "^[a-z_][a-z0-9_]{1,64}$"
+value_type = "string"
+min_properties = 1
+unique_keys = true
+
+[definitions.environment]
+type = "object"
+description = "Global environment variables for all tasks, using uppercase letters, underscores, and digits, starting with a letter or underscore, and between 2 and 64 characters long"
+examples = ["${PATH}", "${HOME}", "${USER}"]
+key_pattern = "^[A-Z_][A-Z0-9_]{1,64}$"
+value_type = "string"
+min_properties = 1
+unique_keys = true
