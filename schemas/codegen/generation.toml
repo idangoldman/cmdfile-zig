@@ -1,0 +1,25 @@
+# schema/codegen/generation.toml
+# Code generation settings
+
+[output]
+base_dir = "src/generated"
+module_file = "mod.zig"
+
+[files]
+structs = "structs.zig"
+validation = "validation.zig"
+help = "help.zig"
+parser = "parser.zig"
+types = "types.zig"
+
+[features]
+generate_json_schema = true
+generate_cli_completions = true
+generate_documentation = true
+generate_tests = true
+generate_examples = true
+
+[optimization]
+inline_small_functions = true
+compile_time_validation = true
+zero_cost_abstractions = true

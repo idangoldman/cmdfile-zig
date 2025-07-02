@@ -1,0 +1,38 @@
+# schema/structs/settings.toml
+# Global settings structure
+
+[struct]
+name = "Settings"
+description = "Global default settings that apply to all tasks"
+generate_init = true
+generate_deinit = true
+
+[fields.shell]
+type = "${common.types.string}"
+description = "Shell to use for command execution"
+required = true
+default = "${common.defaults.shell_unix}"
+pattern = "${common.patterns.shell_path}"
+examples = ["${common.defaults.shell_bash}", "${common.defaults.shell_zsh}", "${common.defaults.shell_powershell}"]
+
+[fields.work_dir]
+type = "${common.types.string}"
+description = "Default working directory for all tasks"
+required = true
+default = "${common.defaults.work_dir_default}"
+min_length = 1
+
+[fields.env_file]
+type = "${common.types.boolean}"
+description = "Automatically load environment variables from .env file"
+default = "${common.defaults.env_file_false}"
+
+[fields.env_file_path]
+type = "${common.types.optional_string}"
+description = "Custom path to environment file"
+default = "${common.defaults.env_file_default}"
+
+[fields.confirm_destructive]
+type = "${common.types.boolean}"
+description = "Require confirmation for potentially destructive operations"
+default = "${common.defaults.confirm_true}"

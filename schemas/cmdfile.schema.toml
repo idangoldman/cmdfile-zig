@@ -1,0 +1,41 @@
+# schema/cmdfile.schema.toml
+# Main schema file that imports and composes all modules
+
+version = "0.1.0"
+description = "cmdfile task runner configuration schema"
+
+# Import modules - processed by schema generator
+imports = [
+    "common/patterns.toml",
+    "common/types.toml",
+    "common/defaults.toml",
+    "structs/settings.toml",
+    "structs/task.toml",
+    "structs/config.toml",
+    "validation/rules.toml",
+    "codegen/generation.toml"
+]
+
+# Global metadata
+[metadata]
+author = "cmdfile contributors"
+license = "MIT"
+schema_url = "https://github.com/user/cmdfile/schema"
+
+# Variable substitution configuration
+[substitution]
+enabled = true
+prefix = "${"
+suffix = "}"
+recursive = true
+max_depth = 5
+
+# Reference resolution order
+[resolution]
+# Order matters for variable resolution
+namespaces = [
+    "common.patterns",
+    "common.types",
+    "common.defaults",
+    "common.constraints"
+]

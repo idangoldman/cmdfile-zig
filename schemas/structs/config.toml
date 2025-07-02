@@ -1,0 +1,39 @@
+# schema/structs/config.toml
+# Root configuration structure
+
+[struct]
+name = "Config"
+description = "Complete cmdfile configuration containing all settings and tasks"
+generate_init = true
+generate_deinit = true
+
+[fields.version]
+type = "${common.types.string}"
+description = "Configuration format version"
+required = true
+default = "${common.defaults.version_default}"
+pattern = "${common.patterns.version_pattern}"
+
+[fields.settings]
+type = "${common.types.settings_type}"
+description = "Global configuration settings"
+required = true
+
+[fields.tasks]
+type = "${common.types.task_map}"
+description = "Named task definitions"
+required = true
+key_pattern = "${common.patterns.task_name}"
+min_entries = 1
+
+[fields.variables]
+type = "${common.types.string_map}"
+description = "Global template variables available to all tasks"
+key_pattern = "${common.patterns.variable_name}"
+max_entries = "${common.constraints.max_variables}"
+
+[fields.environment]
+type = "${common.types.string_map}"
+description = "Global environment variables for all tasks"
+key_pattern = "${common.patterns.env_var_name}"
+max_entries = "${common.constraints.max_environment_vars}"

@@ -1,0 +1,40 @@
+# schema/common/defaults.toml
+# Default values used across schemas
+
+[defaults]
+# Shell defaults by platform
+shell_unix = "/bin/sh"
+shell_bash = "/bin/bash"
+shell_zsh = "/bin/zsh"
+shell_windows = "cmd"
+shell_powershell = "powershell"
+
+# Directory defaults
+work_dir_default = "."
+env_file_default = ".env"
+
+# Boolean defaults
+confirm_false = false
+confirm_true = true
+env_file_false = false
+parallel_true = true
+
+# Numeric defaults
+timeout_none = null
+retry_count_zero = 0
+retry_count_three = 3
+
+# String defaults
+version_default = "0.1.0"
+description_empty = null
+
+# Array defaults
+dependencies_empty = []
+watch_patterns_empty = []
+examples_empty = []
+
+[platform_defaults]
+# Platform-specific defaults
+unix = { shell = "/bin/sh", line_ending = "\\n" }
+windows = { shell = "cmd", line_ending = "\\r\\n" }
+macos = { shell = "/bin/zsh", line_ending = "\\n" }

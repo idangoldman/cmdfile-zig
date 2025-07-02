@@ -1,0 +1,23 @@
+[global]
+shell = "/bin/bash"
+work_dir = "."
+
+[variables]
+build_dir = "build"
+
+[environment]
+NODE_ENV = "development"
+
+[tasks.build]
+command = "npm run build -- --output-path=${build_dir}"
+description = "Build the application"
+
+[tasks.test]
+command = "npm test"
+description = "Run test suite"
+dependencies = ["build"]
+
+[tasks.clean]
+command = "rm -rf ${build_dir}"
+description = "Clean build artifacts"
+confirm = true

@@ -1,0 +1,169 @@
+# schema/codegen/json_schema.toml
+# Template for generating JSON Schema from TOML schema
+
+[json_schema]
+schema_version = "http://json-schema.org/draft-07/schema#"
+title = "cmdfile Configuration"
+description = "Schema for cmdfile task runner configuration files"
+
+[json_schema.root]
+type = "object"
+required = ["tasks"]
+additional_properties = false
+
+# JSON Schema type mappings from TOML types
+[type_mappings]
+string = "string"
+"?string" = { "type" = "string", "nullable" = true }
+bool = "boolean"
+"?bool" = { "type" = "boolean", "nullable" = true }
+u32 = "integer"
+"?u32" = { "type" = "integer", "nullable" = true }
+"[]string" = { "type" = "array", "items" = { "type" = "string" } }
+"HashMap(string)" = { "type" = "object", "additionalProperties" = { "type" = "string" } }
+"?HashMap(string)" = { "type" = "object", "additionalProperties" = { "type" = "string" }, "nullable" = true }
+
+# Property definitions for JSON Schema
+[properties.version]
+type = "string"
+pattern = "${common.patterns.version_pattern}"
+default = "${common.defaults.version_default}"
+description = "Configuration format version"
+
+[properties.settings]
+ref = "#/definitions/Settings"
+description = "Global configuration settings"
+
+[properties.tasks]
+type = "object"
+pattern_properties = { "${common.patterns.task_name}" = { "ref" = "#/definitions/Task" } }
+min_properties = 1
+description = "Named task definitions"
+
+[properties.variables]
+type = "object"
+pattern_properties = { "${common.patterns.variable_name}" = { "type" = "string" } }
+description = "Global template variables"
+
+[properties.environment]
+type = "object"
+pattern_properties = { "${common.patterns.env_var_name}" = { "type" = "string" } }
+description = "Global environment variables"
+
+# JSON Schema definitions section
+[definitions.Settings]
+type = "object"
+required = ["shell", "work_dir"]
+additional_properties = false
+
+[definitions.Settings.properties.shell]
+type = "string"
+pattern = "${common.patterns.shell_path}"
+default = "${common.defaults.shell_unix}"
+
+[definitions.Settings.properties.work_dir]
+type = "string"
+min_length = 1
+default = "${common.defaults.work_dir_default}"
+
+[definitions.Settings.properties.env_file]
+type = "boolean"
+default = false
+
+[definitions.Settings.properties.env_file_path]
+type = "string"
+default = "${common.defaults.env_file_default}"
+
+[definitions.Settings.properties.confirm_destructive]
+type = "boolean"
+default = true
+
+[definitions.Task]
+type = "object"
+required = ["command"]
+additional_properties = false
+
+[definitions.Task.properties.command]
+type = "string"
+min_length = 1
+max_length = "${common.constraints.max_command_length}"
+pattern = "${common.patterns.command_pattern}"
+
+[definitions.Task.properties.description]
+type = "string"
+max_length = "${common.constraints.max_description_length}"
+
+[definitions.Task.properties.confirm]
+type = "boolean"
+default = false
+
+[definitions.Task.properties.timeout]
+type = "integer"
+minimum = "${common.constraints.min_timeout}"
+maximum = "${common.constraints.max_timeout}"
+
+[definitions.Task.properties.retry_count]
+type = "integer"
+minimum = 0
+maximum = "${common.constraints.max_retry_count}"
+default = 0
+
+[definitions.Task.properties.dependencies]
+type = "array"
+items = { type = "string", pattern = "${common.patterns.task_name}" }
+max_items = "${common.constraints.max_dependencies}"
+
+[definitions.Task.properties.work_dir]
+type = "string"
+pattern = "${common.patterns.file_path}"
+
+[definitions.Task.properties.shell]
+type = "string"
+pattern = "${common.patterns.shell_path}"
+
+[definitions.Task.properties.environment]
+type = "object"
+pattern_properties = { "${common.patterns.env_var_name}" = { "type" = "string" } }
+max_properties = "${common.constraints.max_environment_vars}"
+
+[definitions.Task.properties.variables]
+type = "object"
+pattern_properties = { "${common.patterns.variable_name}" = { "type" = "string" } }
+max_properties = "${common.constraints.max_variables}"
+
+[definitions.Task.properties.watch]
+type = "array"
+items = { type = "string" }
+max_items = "${common.constraints.max_watch_patterns}"
+
+[definitions.Task.properties.parallel]
+type = "boolean"
+default = true
+
+[definitions.Profile]
+type = "object"
+additional_properties = false
+
+[definitions.Profile.properties.variables]
+type = "object"
+pattern_properties = { "${common.patterns.variable_name}" = { "type" = "string" } }
+
+[definitions.Profile.properties.environment]
+type = "object"
+pattern_properties = { "${common.patterns.env_var_name}" = { "type" = "string" } }
+
+[definitions.Profile.properties.settings]
+ref = "#/definitions/Settings"
+
+# IDE-specific enhancements
+[ide_enhancements]
+file_match = ["cmdfile.toml", ".cmdfile.toml"]
+schema_store_url = "https://github.com/user/cmdfile/schema/cmdfile.json"
+
+[ide_enhancements.vscode]
+language = "toml"
+schema_association = "cmdfile.toml"
+
+[ide_enhancements.intellij]
+file_type = "TOML"
+schema_mapping = "cmdfile configuration"

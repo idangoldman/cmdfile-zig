@@ -1,0 +1,43 @@
+# schema/common/patterns.toml
+# Reusable regex patterns and constants - change once, use everywhere
+
+[patterns]
+# Naming patterns
+task_name = "^[a-z_][a-z0-9_]{1,64}$"
+variable_name = "^[a-z_][a-z0-9_]{1,64}$"
+env_var_name = "^[A-Z_][A-Z0-9_]{1,64}$"
+
+# File and path patterns
+shell_path = "^[^\\0]+$"
+file_path = "^[^\\0\\r\\n]+$"
+version_pattern = "^\\d+\\.\\d+\\.\\d+$"
+
+# Content patterns
+non_empty_string = "^.+$"
+command_pattern = "^[^\\0]+$"
+no_null_bytes = "^[^\\0]*$"
+
+# Watch patterns examples
+watch_js = "**/*.{js,ts,jsx,tsx}"
+watch_css = "**/*.{css,scss,sass}"
+watch_config = "*.{toml,yaml,yml,json}"
+
+[constraints]
+# Length constraints
+min_name_length = 2
+max_name_length = 64
+max_description_length = 200
+max_command_length = 8192
+
+# Numeric constraints
+min_timeout = 1
+max_timeout = 86400  # 24 hours
+max_retry_count = 10
+min_port = 1
+max_port = 65535
+
+# Collection constraints
+max_dependencies = 50
+max_environment_vars = 100
+max_variables = 100
+max_watch_patterns = 20

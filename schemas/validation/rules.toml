@@ -1,0 +1,13 @@
+# schema/validation/rules.toml
+# Global validation rules
+
+[validation]
+circular_dependencies = { enabled = true, max_depth = 100 }
+dependency_existence = { enabled = true }
+pattern_validation = { enabled = true }
+type_checking = { enabled = true }
+
+[naming_conventions]
+enforce_patterns = true
+case_sensitivity = true
+reserved_words = ["if", "else", "while", "for", "function", "class"]
