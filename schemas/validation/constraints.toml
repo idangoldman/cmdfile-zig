@@ -1,0 +1,11 @@
+# schema/validation/constraints.toml
+# Global constraints for cmdfile schema validation
+
+[constraints]
+max_command_length = 8192
+max_dependencies = 50
+max_description_length = 200
+max_environment_vars = 100
+max_name_length = 64
+max_variables = 100
+min_name_length = 2

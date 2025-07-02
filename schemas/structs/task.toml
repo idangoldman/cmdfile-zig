@@ -26,18 +26,6 @@ type = "${common.types.boolean}"
 description = "Require user confirmation before executing this task"
 default = "${common.defaults.confirm_false}"
 
-[fields.timeout]
-type = "${common.types.optional_integer}"
-description = "Maximum execution time in seconds"
-min_value = "${common.constraints.min_timeout}"
-max_value = "${common.constraints.max_timeout}"
-
-[fields.retry_count]
-type = "${common.types.integer}"
-description = "Number of times to retry task on failure"
-default = "${common.defaults.retry_count_zero}"
-max_value = "${common.constraints.max_retry_count}"
-
 [fields.dependencies]
 type = "${common.types.string_array}"
 description = "List of task names that must complete successfully before this task runs"
@@ -65,13 +53,3 @@ type = "${common.types.optional_string_map}"
 description = "Task-specific template variables for command substitution"
 key_pattern = "${common.patterns.variable_name}"
 max_entries = "${common.constraints.max_variables}"
-
-[fields.watch]
-type = "${common.types.string_array}"
-description = "File patterns to monitor for automatic task re-execution"
-max_items = "${common.constraints.max_watch_patterns}"
-
-[fields.parallel]
-type = "${common.types.boolean}"
-description = "Allow this task to run in parallel with other parallel tasks"
-default = "${common.defaults.parallel_true}"
