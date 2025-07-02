@@ -18,4 +18,5 @@ JSON Schema validation in Zig
 
 Dependency resolution articles
 
-https://ochagavia.nl/blog/the-magic-of-dependency-resolution/
+- https://ochagavia.nl/blog/the-magic-of-dependency-resolution/
+- https://borretti.me/article/dependency-resolution-made-simple
