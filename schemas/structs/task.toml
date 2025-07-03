@@ -9,6 +9,7 @@ generate_deinit = true
 
 [fields.command]
 type = "${common.types.string}"
+aliases = ["cmd"]
 description = "Shell command to execute for this task"
 required = true
 min_length = 1
@@ -18,6 +19,7 @@ examples = ["echo 'Hello World'", "npm run build", "python script.py"]
 
 [fields.description]
 type = "${common.types.optional_string}"
+aliases = ["desc"]
 description = "Human-readable description of what this task does"
 max_length = "${common.constraints.max_description_length}"
 
@@ -28,28 +30,33 @@ default = "${common.defaults.confirm_false}"
 
 [fields.dependencies]
 type = "${common.types.string_array}"
+aliases = ["deps"]
 description = "List of task names that must complete successfully before this task runs"
 item_pattern = "${common.patterns.task_name}"
 max_items = "${common.constraints.max_dependencies}"
 
 [fields.work_dir]
 type = "${common.types.optional_string}"
+aliases = ["wd", "working_directory", "workdir", "dir", "cwd"]
 description = "Override default working directory for this task"
 pattern = "${common.patterns.file_path}"
 
 [fields.shell]
 type = "${common.types.optional_string}"
+aliases = ["sh"]
 description = "Override default shell for this task"
 pattern = "${common.patterns.shell_path}"
 
 [fields.environment]
 type = "${common.types.optional_string_map}"
+aliases = ["environment_variables", "environment_vars", "env", "env_vars"]
 description = "Task-specific environment variables"
 key_pattern = "${common.patterns.env_var_name}"
 max_entries = "${common.constraints.max_environment_vars}"
 
 [fields.variables]
 type = "${common.types.optional_string_map}"
+aliases = ["vars"]
 description = "Task-specific template variables for command substitution"
 key_pattern = "${common.patterns.variable_name}"
 max_entries = "${common.constraints.max_variables}"

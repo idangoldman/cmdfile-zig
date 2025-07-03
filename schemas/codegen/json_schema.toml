@@ -74,10 +74,6 @@ default = false
 type = "string"
 default = "${common.defaults.env_file_default}"
 
-[definitions.Settings.properties.confirm_destructive]
-type = "boolean"
-default = true
-
 [definitions.Task]
 type = "object"
 required = ["command"]
@@ -96,17 +92,6 @@ max_length = "${common.constraints.max_description_length}"
 [definitions.Task.properties.confirm]
 type = "boolean"
 default = false
-
-[definitions.Task.properties.timeout]
-type = "integer"
-minimum = "${common.constraints.min_timeout}"
-maximum = "${common.constraints.max_timeout}"
-
-[definitions.Task.properties.retry_count]
-type = "integer"
-minimum = 0
-maximum = "${common.constraints.max_retry_count}"
-default = 0
 
 [definitions.Task.properties.dependencies]
 type = "array"
@@ -130,30 +115,6 @@ max_properties = "${common.constraints.max_environment_vars}"
 type = "object"
 pattern_properties = { "${common.patterns.variable_name}" = { "type" = "string" } }
 max_properties = "${common.constraints.max_variables}"
-
-[definitions.Task.properties.watch]
-type = "array"
-items = { type = "string" }
-max_items = "${common.constraints.max_watch_patterns}"
-
-[definitions.Task.properties.parallel]
-type = "boolean"
-default = true
-
-[definitions.Profile]
-type = "object"
-additional_properties = false
-
-[definitions.Profile.properties.variables]
-type = "object"
-pattern_properties = { "${common.patterns.variable_name}" = { "type" = "string" } }
-
-[definitions.Profile.properties.environment]
-type = "object"
-pattern_properties = { "${common.patterns.env_var_name}" = { "type" = "string" } }
-
-[definitions.Profile.properties.settings]
-ref = "#/definitions/Settings"
 
 # IDE-specific enhancements
 [ide_enhancements]

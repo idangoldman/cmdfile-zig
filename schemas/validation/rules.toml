@@ -11,3 +11,9 @@ type_checking = { enabled = true }
 enforce_patterns = true
 case_sensitivity = true
 reserved_words = ["if", "else", "while", "for", "function", "class"]
+
+[aliases]
+conflict_resolution = "error"
+conflict_resolution_options = ["error", "warn", "ignore"]
+normalization = "canonical"    # Always normalize to canonical form
+case_sensitive = true          # Allow case variations
