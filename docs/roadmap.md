@@ -1,437 +1,420 @@
-# cmdfile Roadmap to 1.0 - Comprehensive Development Plan
+The user wants me to rewrite the roadmap in a more actionable format - essentially breaking it down into concrete, executable action items that can be done one at a time, rather than the more narrative/descriptive format I provided before. This should be more like a task list or project breakdown structure where each item is a specific, actionable task.
 
-## Executive Summary
+Looking at all the information we've discussed:
+1. The schema-driven approach with simplified initial implementation
+2. The target users (developers migrating from npm scripts, composer scripts, etc.)
+3. The focus on DX over complexity for the first version
+4. The hybrid code generation approach
+5. The specific schema simplifications we discussed
 
-This roadmap transforms cmdfile from version 0.0.1 to a production-ready 1.0 release over 6 major versions, focusing on core stability, essential features, and enterprise readiness.
+I should structure this as:
+- Clear, actionable items
+- Each item should be specific enough to be executed
+- Items should be ordered logically (dependencies)
+- Each item should have a clear deliverable/outcome
+- Should mention when items can be broken down further during execution
 
-## Version 0.1.0 - Foundation Stabilization (4-6 weeks)
+I'll organize this by major phases but make each action item concrete and executable.
 
-### Priority 1: Core Infrastructure Fixes
+# cmdfile Development Roadmap: Actionable Implementation Plan
 
-- **Configuration Format Decision** 🔥
-  - Choose between TOML and YAML (recommend TOML for simplicity)
-  - Implement robust parser using existing Zig libraries
-  - Migrate existing YAML code to TOML
-  - Update all documentation and examples
-
-- **Enhanced Configuration System**
-  - Complete `config.zig` rewrite with proper TOML parsing
-  - Add comprehensive validation with detailed error messages
-  - Implement configuration schema validation
-  - Add support for configuration file discovery (`cmdfile.toml`, `.cmdfile.toml`)
-
-- **Improved CLI Interface**
-  - Fix argument parsing edge cases in `main.zig`
-  - Add proper command validation and error handling
-  - Implement `cmdfile list` command
-  - Add `cmdfile validate` command for configuration checking
-
-- **Testing Infrastructure**
-  - Complete all placeholder tests in `test/` directory
-  - Add integration tests for end-to-end workflows
-  - Implement test fixtures and helper utilities
-  - Add CI/CD pipeline configuration
-
-### Priority 2: Basic Task System
-
-- **Task Execution Engine**
-  - Complete `task_runner.zig` implementation
-  - Add task discovery and validation
-  - Implement basic dependency resolution (linear dependencies only)
-  - Add comprehensive error reporting for task failures
-
-- **Shell Integration**
-  - Improve cross-platform shell detection
-  - Add shell-specific command escaping
-  - Implement working directory management
-  - Add environment variable inheritance
-
-### Deliverables
-
-- Stable configuration parsing with TOML
-- Complete CLI command suite (init, list, validate, task, help, version)
-- Basic task execution with simple dependencies
-- Comprehensive test coverage (>80%)
-- Cross-platform compatibility verified
+## Overview
+This roadmap breaks down cmdfile development into concrete, executable action items. Each item is designed to be completed independently or broken down into smaller sub-tasks during execution. Items are ordered by dependency and logical progression.
 
 ---
 
-## Version 0.2.0 - Core Features (4-5 weeks)
+## Phase 1: Foundation (Weeks 1-8)
 
-### Priority 1: Variable System
+### Schema Architecture & Code Generation
 
-- **Template Engine**
-  - Implement `${variable}` substitution in commands
-  - Add support for environment variables (`${ENV_VAR}`)
-  - Create variable scoping (global, task-local)
-  - Add variable validation and type checking
+**Action 1.1: Create simplified core schema files**
+- Create `schemas/structs/task.toml` with only: command, description, dependencies, confirm
+- Create `schemas/structs/config.toml` with only: version, settings, tasks, variables, environment  
+- Create `schemas/structs/settings.toml` with only: shell, work_dir, env_file
+- Remove all alias support except: `cmd` for `command`, `deps` for `dependencies`
+- Use relaxed validation patterns (allow hyphens in task names, broader character sets)
 
-- **Environment Management**
-  - Complete environment variable handling in tasks
-  - Add `.env` file support
-  - Implement environment inheritance and overrides
-  - Add environment variable validation
+**Action 1.2: Implement comptime schema reader**
+- Write `src/schema/reader.zig` that reads TOML schema files at compile time
+- Create basic struct generation from schema definitions
+- Generate simple validation functions for required fields and basic patterns
+- Output generated code to `src/generated/structs.zig`
 
-### Priority 2: Enhanced Task Features
+**Action 1.3: Create TOML configuration parser**
+- Integrate `zig-toml` dependency in `build.zig.zon`
+- Implement `src/config.zig` using generated structs
+- Add configuration file discovery (`cmdfile.toml`, `.cmdfile.toml`)
+- Implement basic error reporting with line numbers
 
-- **Task Dependencies**
-  - Complete dependency resolution algorithm
-  - Add circular dependency detection
-  - Implement dependency visualization (`cmdfile deps <task>`)
-  - Add dependency caching for performance
+**Action 1.4: Add configuration validation**
+- Implement task name pattern validation
+- Add circular dependency detection for task dependencies
+- Validate variable references exist
+- Create helpful error messages with suggestions
 
-- **Task Validation**
-  - Add pre-execution validation
-  - Implement task command syntax checking
-  - Add resource availability checking
-  - Create task linting with suggestions
+### Core CLI Implementation
 
-- **User Experience**
-  - Add task descriptions and help text
-  - Implement confirmation prompts for dangerous tasks
-  - Add progress indicators for long-running tasks
-  - Create detailed execution logging
+**Action 1.5: Implement basic CLI commands**
+- Complete `src/cli.zig` with: init, list, validate, version, help commands
+- Update `cmdfile init` to generate simplified TOML configuration
+- Implement `cmdfile list` to show tasks with descriptions
+- Implement `cmdfile validate` to check configuration without execution
 
-### Priority 3: Error Handling & Debugging
+**Action 1.6: Fix argument parsing in main.zig**
+- Improve command-line argument handling
+- Add proper error handling for invalid commands
+- Implement task execution argument passing (`cmdfile run <task> [args]`)
 
-- **Advanced Error System**
-  - Implement structured error types
-  - Add error context and suggestions
-  - Create error recovery mechanisms
-  - Add debug mode with verbose logging
+### Basic Task Execution
 
-### Deliverables
+**Action 1.7: Implement linear dependency resolution**
+- Create dependency graph builder in `src/task_runner.zig`
+- Implement topological sort for execution order
+- Add circular dependency detection with clear error messages
+- Support simple dependency chains only (no parallel execution yet)
 
-- Complete variable substitution system
-- Full environment variable management
-- Robust dependency resolution with cycle detection
-- Enhanced user experience with confirmations and progress
-- Production-ready error handling
+**Action 1.8: Implement basic variable substitution**
+- Support `${variable}` syntax in task commands
+- Implement non-recursive variable resolution only
+- Add global variables from config
+- Add environment variable access via `${ENV_VAR}` syntax
 
----
+**Action 1.9: Implement cross-platform task execution**
+- Detect appropriate shell per platform (bash/zsh on Unix, cmd/PowerShell on Windows)
+- Implement working directory management
+- Add environment variable inheritance and overrides
+- Handle command escaping properly per platform
 
-## Version 0.3.0 - Advanced Execution (3-4 weeks)
+### Testing Infrastructure
 
-### Priority 1: Parallel Execution
+**Action 1.10: Complete test files**
+- Finish placeholder tests in `test/cli_test.zig`
+- Finish placeholder tests in `test/config_test.zig` 
+- Finish placeholder tests in `test/task_runner_test.zig`
+- Add integration tests for full workflows
+- Create test fixtures for various project types
 
-- **Task Orchestration**
-  - Implement parallel task execution engine
-  - Add task scheduling and resource management
-  - Create execution strategies (serial, parallel, mixed)
-  - Add task timeout and cancellation support
+**Action 1.11: Set up CI/CD pipeline**
+- Configure GitHub Actions for multi-platform builds (Windows, macOS, Linux)
+- Add automated testing on all platforms
+- Implement test coverage reporting
+- Add performance regression detection
 
-- **Process Management**
-  - Implement process pool management
-  - Add resource limiting (CPU, memory)
-  - Create process monitoring and health checks
-  - Add graceful shutdown handling
+### Documentation & User Experience
 
-### Priority 2: Interactive Features
+**Action 1.12: Create comprehensive error handling**
+- Implement structured error types in `src/errors.zig`
+- Add context and suggestions to all error messages
+- Create error recovery mechanisms where possible
+- Add debug mode with verbose logging
 
-- **Prompt System**
-  - Implement interactive prompts in tasks
-  - Add automated prompt responses from configuration
-  - Create prompt validation and retry logic
-  - Add secure input handling for sensitive data
-
-- **Real-time Feedback**
-  - Add real-time task output streaming
-  - Implement task status monitoring
-  - Create live progress updates
-  - Add task cancellation support
-
-### Priority 3: File Operations
-
-- **File Watching** (Basic)
-  - Implement basic file change detection
-  - Add simple watch patterns (`*.js`, `src/**/*.ts`)
-  - Create automatic task re-execution
-  - Add debouncing for rapid changes
-
-### Deliverables
-
-- Parallel task execution with proper resource management
-- Interactive prompt system with automation support
-- Basic file watching capabilities
-- Real-time execution feedback and monitoring
+**Action 1.13: Add progress indication and logging**
+- Implement real-time task output streaming
+- Add progress indicators for task execution
+- Create configurable log levels (quiet, normal, verbose)
+- Add execution timing and performance metrics
 
 ---
 
-## Version 0.4.0 - Migration & Integration (3-4 weeks)
+## Phase 2: Enhanced Features (Weeks 9-14)
 
-### Priority 1: Migration Tools
+### Advanced Variable System
 
-- **Package Manager Integration**
-  - Create `package.json` scripts migration
-  - Add `Makefile` conversion utility
-  - Implement `Taskfile.yml` migration
-  - Create `composer.json` scripts migration
+**Action 2.1: Implement task-local variables**
+- Extend schema to support per-task variable definitions
+- Implement variable scoping (task overrides global)
+- Update variable resolution to handle scope hierarchy
+- Add validation for variable scope conflicts
 
-- **Project Templates**
-  - Add project type detection
-  - Create language-specific templates (Node.js, Python, Rust, Go, Java)
-  - Implement template customization
-  - Add template validation and testing
+**Action 2.2: Add environment file support**
+- Implement `.env` file parsing
+- Add automatic `.env` loading when `env_file = true`
+- Support custom env file paths via `env_file_path`
+- Merge env file variables with configuration variables
 
-### Priority 2: Developer Experience
+### Enhanced Task Features  
 
-- **Shell Integration**
-  - Implement bash completion
-  - Add zsh completion support
-  - Create fish shell completion
-  - Add shell integration scripts
+**Action 2.3: Add confirmation prompts**
+- Implement interactive confirmation for tasks marked with `confirm = true`
+- Add automatic confirmation bypass for CI environments
+- Support batch confirmation for multiple tasks
+- Add timeout handling for prompts
 
-- **IDE Support**
-  - Create configuration file schema for IDEs
-  - Add syntax highlighting support files
-  - Implement configuration validation for editors
-  - Create IDE extension documentation
+**Action 2.4: Implement enhanced dependency features**
+- Add dependency validation (ensure referenced tasks exist)
+- Implement dependency visualization (`cmdfile deps <task>`)
+- Add support for optional dependencies (continue on failure)
+- Create dependency caching for performance
 
-### Priority 3: Documentation & Examples
+### User Experience Improvements
 
-- **Comprehensive Documentation**
-  - Create detailed usage guides
-  - Add configuration reference
-  - Create migration guides from other tools
-  - Add troubleshooting documentation
+**Action 2.5: Enhanced CLI output and formatting**
+- Add colored output with `--no-color` flag support
+- Implement table formatting for task lists
+- Add emoji/icons for status indicators
+- Create consistent output formatting across commands
 
-### Deliverables
-
-- Migration tools for major task runners and package managers
-- Project templates for popular languages and frameworks
-- Shell completion for major shells
-- Comprehensive documentation and examples
-
----
-
-## Version 0.5.0 - Advanced Features (4-5 weeks)
-
-### Priority 1: Advanced File Watching
-
-- **Enhanced Watch System**
-  - Implement glob pattern matching
-  - Add ignore patterns (`.gitignore` style)
-  - Create watch efficiency optimizations
-  - Add cross-platform watch notifications
-
-- **Smart Execution**
-  - Implement incremental task execution
-  - Add file dependency tracking
-  - Create selective task execution based on changes
-  - Add build cache management
-
-### Priority 2: Task Scheduling
-
-- **Cron-like Scheduling**
-  - Implement basic scheduling syntax
-  - Add schedule validation and parsing
-  - Create schedule execution engine
-  - Add schedule monitoring and logging
-
-- **Event-driven Execution**
-  - Add file system event triggers
-  - Implement network event triggers
-  - Create custom event system
-  - Add event filtering and routing
-
-### Priority 3: Configuration Management
-
-- **Advanced Configuration**
-  - Implement configuration inheritance
-  - Add profile-based configurations (dev, prod, test)
-  - Create configuration merging strategies
-  - Add configuration validation schemas
-
-### Deliverables
-
-- Advanced file watching with intelligent execution
-- Basic task scheduling capabilities
-- Configuration inheritance and profiles
-- Event-driven task execution
+**Action 2.6: Add more built-in validations**
+- Validate shell paths exist and are executable
+- Check working directories exist
+- Validate environment variable names follow conventions
+- Add warnings for common configuration mistakes
 
 ---
 
-## Version 0.6.0 - Enterprise Features (5-6 weeks)
+## Phase 3: Advanced Execution (Weeks 15-20)
 
-### Priority 1: Security & Compliance
+### Parallel Execution
 
-- **Security Framework**
-  - Implement command injection prevention
-  - Add sandbox execution modes
-  - Create privilege escalation controls
-  - Add audit logging for security events
+**Action 3.1: Implement parallel task execution**
+- Design task scheduler for parallel execution
+- Implement resource limits (max concurrent tasks)
+- Add parallel execution while preserving dependency order
+- Create process isolation for concurrent tasks
 
-- **Configuration Security**
-  - Implement encrypted configuration support
-  - Add secure credential management
-  - Create access control for sensitive tasks
-  - Add configuration signing and verification
+**Action 3.2: Add execution strategies**
+- Support different execution modes (serial, parallel, mixed)
+- Add task timeout support with configurable limits
+- Implement task cancellation and signal handling
+- Add graceful shutdown for interrupt signals
 
-### Priority 2: Remote Execution
+### File Watching
 
-- **SSH Integration**
-  - Implement SSH remote execution
-  - Add SSH key management
-  - Create secure connection pooling
-  - Add remote host configuration
+**Action 3.3: Implement basic file watching**
+- Add file system monitoring using Zig's `std.fs.watch`
+- Support basic glob patterns for watch specifications
+- Implement change debouncing to prevent excessive executions
+- Add watch configuration to task definitions
 
-- **Container Support**
-  - Add Docker integration
-  - Implement container-based task execution
-  - Create container lifecycle management
-  - Add container resource management
+**Action 3.4: Integrate file watching with task execution**
+- Trigger appropriate tasks when watched files change
+- Respect task dependencies when auto-executing
+- Add watch mode CLI command (`cmdfile watch [task]`)
+- Implement watch pattern validation
 
-### Priority 3: Monitoring & Observability
+### Advanced Configuration
 
-- **Performance Monitoring**
-  - Implement task execution metrics
-  - Add performance profiling
-  - Create resource usage tracking
-  - Add performance optimization suggestions
+**Action 3.5: Add configuration profiles**
+- Implement profile-based configuration sections
+- Add profile selection via CLI (`--profile dev|prod|test`)
+- Support profile-specific variable overrides
+- Add profile validation and error handling
 
-- **Logging & Auditing**
-  - Create structured logging system
-  - Add audit trail for all executions
-  - Implement log rotation and management
-  - Add log analysis and reporting
-
-### Deliverables
-
-- Enterprise-grade security features
-- Remote execution capabilities
-- Container integration
-- Comprehensive monitoring and logging
+**Action 3.6: Implement configuration inheritance**
+- Support configuration file imports/includes
+- Add base configuration with environment-specific overrides
+- Implement inheritance conflict resolution
+- Add validation for inheritance cycles
 
 ---
 
-## Version 1.0.0 - Production Release (3-4 weeks)
+## Phase 4: Migration & Integration (Weeks 21-24)
 
-### Priority 1: Stability & Performance
+### Migration Tools
 
-- **Production Hardening**
-  - Complete performance optimization
-  - Add memory usage optimization
-  - Implement startup time improvements
-  - Add comprehensive error recovery
+**Action 4.1: Implement npm scripts migration**
+- Create `cmdfile migrate npm` command
+- Parse `package.json` scripts section
+- Convert npm script patterns to cmdfile tasks
+- Handle npm script composition and dependencies
 
-- **Quality Assurance**
-  - Complete test coverage (>95%)
-  - Add extensive integration testing
-  - Implement stress testing
-  - Create performance benchmarks
+**Action 4.2: Implement additional migration tools**
+- Add `cmdfile migrate makefile` for Makefile conversion
+- Add `cmdfile migrate composer` for composer.json scripts
+- Add `cmdfile migrate taskfile` for Taskfile.yml conversion
+- Create generic migration framework for extensibility
 
-### Priority 2: Plugin System
+### Project Templates
 
-- **Extensibility Framework**
-  - Design plugin architecture
-  - Implement plugin loading system
-  - Create plugin API documentation
-  - Add plugin management commands
+**Action 4.3: Create project templates**
+- Design template system architecture
+- Create templates for: Node.js, Python, Go, Rust, PHP projects
+- Add framework-specific templates: React, Django, Rails, etc.
+- Implement template selection during `cmdfile init`
 
-- **Core Plugins**
-  - Create Git integration plugin
-  - Add database migration plugin
-  - Implement Docker Compose plugin
-  - Create Kubernetes integration plugin
+**Action 4.4: Add template customization**
+- Support template variables during initialization
+- Add interactive template configuration
+- Implement template validation and testing
+- Create template documentation and examples
 
-### Priority 3: Documentation & Release
+### Developer Integration
 
-- **Release Preparation**
-  - Complete API documentation
-  - Create migration guides from 0.x versions
-  - Add performance tuning guides
-  - Create deployment documentation
+**Action 4.5: Implement shell completion**
+- Generate bash completion scripts
+- Add zsh completion support  
+- Create fish shell completion
+- Add completion installation instructions
 
-- **Release Infrastructure**
-  - Set up automated release pipeline
-  - Create package distribution (homebrew, apt, etc.)
-  - Add automatic update mechanism
-  - Create release announcement materials
-
-### Deliverables
-
-- Production-ready 1.0 release
-- Complete plugin system
-- Comprehensive documentation
-- Automated release infrastructure
+**Action 4.6: Add IDE support**
+- Generate JSON Schema from TOML schemas for IDE integration
+- Create Language Server Protocol support for configuration files
+- Add syntax highlighting definitions
+- Create IDE extension documentation
 
 ---
 
-## Success Metrics & Quality Gates
+## Phase 5: Advanced Features (Weeks 25-30)
 
-### Each Version Must Meet
+### Intelligent Features
 
-- **Test Coverage**: Minimum 80% (90% for 1.0)
-- **Performance**: Sub-100ms startup time
-- **Memory**: <10MB base memory usage
-- **Compatibility**: Windows 10+, macOS 10.15+, Linux (major distros)
-- **Documentation**: All public APIs documented
-- **Security**: No known vulnerabilities
+**Action 5.1: Implement advanced file watching**
+- Add intelligent change detection (content-based, not just timestamp)
+- Implement incremental task execution based on file changes
+- Add build cache management
+- Support ignore patterns (`.gitignore` style)
 
-### Release Criteria
+**Action 5.2: Add performance optimization**
+- Implement task execution analytics
+- Add performance bottleneck detection
+- Create optimization suggestions
+- Add execution profiling and timing analysis
 
-- All planned features implemented and tested
-- No critical or high-severity bugs
-- Performance benchmarks met
-- Documentation complete and reviewed
-- Migration path from previous version validated
+### Event System
 
----
+**Action 5.3: Implement event-driven execution**
+- Design event system architecture
+- Add time-based task scheduling (cron-like)
+- Implement custom event triggers
+- Add webhook support for external triggers
 
-## Risk Mitigation
+**Action 5.4: Add advanced scheduling**
+- Support complex scheduling expressions
+- Add schedule validation and testing
+- Implement schedule conflict detection
+- Create scheduling visualization tools
 
-### Technical Risks
+### Configuration Intelligence
 
-- **Zig Ecosystem Maturity**: Fallback to C libraries for complex parsing
-- **Cross-platform Compatibility**: Early testing on all target platforms
-- **Performance Requirements**: Regular benchmarking and optimization
-- **Memory Management**: Extensive testing with valgrind/AddressSanitizer
+**Action 5.5: Add configuration analysis**
+- Implement configuration linting with best practice suggestions
+- Add automatic optimization recommendations
+- Create configuration complexity analysis
+- Add team collaboration pattern detection
 
-### Project Risks
-
-- **Scope Creep**: Strict adherence to version goals
-- **Resource Constraints**: Prioritized feature development
-- **Community Adoption**: Early beta releases for feedback
-- **Competition**: Focus on unique value propositions
-
----
-
-## Resource Requirements
-
-### Development Team
-
-- **Lead Developer**: Zig expert, systems programming
-- **Platform Engineer**: Cross-platform testing and optimization
-- **DevOps Engineer**: CI/CD, release automation
-- **Technical Writer**: Documentation and guides
-
-### Infrastructure
-
-- **CI/CD**: GitHub Actions with multi-platform builds
-- **Testing**: Automated testing on Windows, macOS, Linux
-- **Distribution**: Package repositories and release management
-- **Monitoring**: Performance tracking and user analytics
+**Action 5.6: Implement schema evolution**
+- Add configuration migration tools for schema updates
+- Support multiple schema versions simultaneously
+- Create automatic configuration upgrading
+- Add deprecation warnings and migration guides
 
 ---
 
-## Next Steps
+## Phase 6: Enterprise & Production (Weeks 31-36)
 
-1. **Immediate (Week 1-2)**:
-   - Decide on TOML vs YAML configuration format
-   - Set up robust CI/CD pipeline
-   - Create project governance and contribution guidelines
+### Security Features
 
-2. **Short-term (Month 1)**:
-   - Begin Version 0.1.0 development
-   - Set up automated testing infrastructure
-   - Create initial community engagement plan
+**Action 6.1: Implement security framework**
+- Add command injection prevention
+- Implement input sanitization for variables
+- Add sandbox execution modes
+- Create security audit logging
 
-3. **Medium-term (Months 2-4)**:
-   - Execute Versions 0.1.0 through 0.3.0
-   - Gather community feedback and adjust roadmap
-   - Build ecosystem partnerships
+**Action 6.2: Add credential management**
+- Support encrypted configuration values
+- Integrate with system credential stores
+- Add secure variable substitution
+- Implement access control for sensitive tasks
 
-4. **Long-term (Months 5-8)**:
-   - Complete advanced features (0.4.0-0.6.0)
-   - Prepare for 1.0 production release
-   - Establish long-term maintenance plan
+### Remote Execution
+
+**Action 6.3: Implement SSH integration**
+- Add SSH remote task execution
+- Implement SSH key management
+- Add connection pooling and retry logic
+- Support remote dependency coordination
+
+**Action 6.4: Add container support**
+- Integrate Docker for containerized task execution
+- Add container lifecycle management
+- Support Docker Compose integration
+- Implement container resource management
+
+### Monitoring & Observability
+
+**Action 6.5: Implement comprehensive logging**
+- Add structured logging with configurable outputs
+- Implement audit trails for all operations
+- Add performance metrics collection
+- Create log analysis and reporting tools
+
+**Action 6.6: Add monitoring integration**
+- Support external monitoring system integration
+- Add health check endpoints
+- Implement alerting for task failures
+- Create dashboard and visualization support
+
+---
+
+## Phase 7: Production Release (Weeks 37-40)
+
+### Plugin System
+
+**Action 7.1: Design and implement plugin architecture**
+- Create plugin interface definitions
+- Implement plugin loading and management system
+- Add plugin security validation
+- Create plugin development documentation
+
+**Action 7.2: Develop core plugins**
+- Create Git integration plugin
+- Add Docker Compose plugin
+- Implement Kubernetes plugin
+- Create database migration plugin
+
+### Release Preparation
+
+**Action 7.3: Production hardening**
+- Complete performance optimization
+- Implement memory usage optimization
+- Add startup time optimization (<100ms)
+- Complete cross-platform compatibility testing
+
+**Action 7.4: Documentation and packaging**
+- Complete comprehensive documentation
+- Create installation packages (homebrew, apt, chocolatey)
+- Add automatic update mechanism
+- Create release announcement materials
+
+### Quality Assurance
+
+**Action 7.5: Final testing and validation**
+- Achieve >95% test coverage
+- Complete stress testing and performance benchmarks
+- Validate all migration tools with real projects
+- Conduct security audit and penetration testing
+
+**Action 7.6: Release infrastructure**
+- Set up automated release pipeline
+- Create package distribution infrastructure  
+- Implement telemetry and crash reporting
+- Establish community contribution guidelines
+
+---
+
+## Implementation Guidelines
+
+### Breaking Down Action Items
+When executing each action item:
+1. Start by creating a detailed task breakdown if the item feels too large
+2. Identify dependencies and prerequisites before beginning
+3. Create tests before implementing functionality (TDD approach)
+4. Document design decisions and trade-offs
+5. Validate with simple examples before moving to complex cases
+
+### Quality Gates
+Each action item must meet:
+- All tests pass on target platforms (Windows, macOS, Linux)
+- No memory leaks detected
+- Performance meets established benchmarks
+- Documentation updated for user-facing changes
+- Breaking changes include migration path
+
+### Risk Mitigation
+- Implement MVP version of each feature before adding complexity
+- Validate design decisions with real-world usage examples
+- Maintain backwards compatibility within major versions
+- Regular testing with real project configurations
+- Community feedback integration at key milestones
+
+This roadmap provides concrete, executable steps toward building cmdfile while maintaining flexibility to adapt based on learning and feedback during implementation.
