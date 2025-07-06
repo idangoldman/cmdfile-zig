@@ -9,6 +9,7 @@ optional_boolean = "?bool"
 integer = "u32"
 optional_integer = "?u32"
 string_array = "[]string"
+optional_string_array = "?[]string"
 string_map = "HashMap(string)"
 optional_string_map = "?HashMap(string)"
 

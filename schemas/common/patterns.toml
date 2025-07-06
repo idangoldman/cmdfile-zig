@@ -2,12 +2,8 @@
 # Reusable regex patterns and constants - change once, use everywhere
 
 [patterns]
-command_pattern = "^[^\\0]+$"
-env_var_name = "^[A-Z_][A-Z0-9_]{1,64}$"
-file_path = "^[^\\0\\r\\n]+$"
-no_null_bytes = "^[^\\0]*$"
-non_empty_string = "^.+$"
-shell_path = "^[^\\0]+$"
-task_name = "^[a-z_][a-z0-9_]{1,64}$"
-variable_name = "^[a-z_][a-z0-9_]{1,64}$"
-version_pattern = "^\\d+\\.\\d+\\.\\d+$"
+constant_convention = "^[A-Z_][A-Z0-9_]{1,64}$"
+empty_string = "^[^\\0]*$"
+naming_convention = "^[a-z_][a-z0-9_]{1,64}$"
+not_empty_string = "^[^\\0\\r\\n]+$"
+version = "^\\d+\\.\\d+\\.\\d+$"
