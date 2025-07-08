@@ -2,8 +2,9 @@
 # Reusable regex patterns and constants - change once, use everywhere
 
 [patterns]
-constant_convention = "^[A-Z_][A-Z0-9_]{1,64}$"
+boolean = "^(true|false)$"
+constant = "^[A-Z_][A-Z0-9_]{1,64}$"
 empty_string = "^[^\\0]*$"
-naming_convention = "^[a-z_][a-z0-9_]{1,64}$"
+name = "^[a-z_][a-z0-9_]{1,64}$"
 not_empty_string = "^[^\\0\\r\\n]+$"
 version = "^\\d+\\.\\d+\\.\\d+$"

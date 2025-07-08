@@ -25,10 +25,10 @@ u32 = "integer"
 
 # Property definitions for JSON Schema
 [properties.version]
-type = "string"
-pattern = "${common.patterns.version_pattern}"
-default = "${common.defaults.version_default}"
+default = "${common.config.version}"
 description = "Configuration format version"
+pattern = "${common.patterns.version}"
+type = "string"
 
 [properties.settings]
 ref = "#/definitions/Settings"

@@ -10,12 +10,13 @@ aliases = ["cmd"]
 description = "Shell command to execute for this task"
 examples = ["echo 'Hello World'", "npm run build", "python script.py"]
 pattern = "${common.patterns.not_empty_string}"
-required = false
-type = "${common.types.optional_string}"
+required = true
+type = "${common.types.string}"
 
 [fields.description]
 aliases = ["desc"]
 description = "Human-readable description of what this task does"
+examples = ["Build the project", "Run tests", "Deploy to production"]
 pattern = "${common.patterns.not_empty_string}"
 required = false
 type = "${common.types.optional_string}"
@@ -23,13 +24,16 @@ type = "${common.types.optional_string}"
 [fields.confirm]
 default = false
 description = "Require user confirmation before executing this task"
+examples = ["true", "false"]
 required = false
+pattern = "${common.patterns.boolean}"
 type = "${common.types.boolean}"
 
 [fields.dependencies]
 aliases = ["deps"]
 description = "List of task names that must complete successfully before this task runs"
-pattern = "${common.patterns.naming_convention}"
+examples = ["build", "test"]
+pattern = "${common.patterns.name}"
 required = false
 type = "${common.types.optional_string_array}"
 

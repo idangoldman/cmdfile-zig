@@ -6,18 +6,18 @@ base_dir = "src/generated"
 module_file = "mod.zig"
 
 [files]
-structs = "structs.zig"
-validation = "validation.zig"
 help = "help.zig"
 parser = "parser.zig"
+structs = "structs.zig"
 types = "types.zig"
+validation = "validation.zig"
 
 [features]
-generate_json_schema = true
-generate_cli_completions = true
-generate_documentation = true
-generate_tests = true
-generate_examples = true
+cli_completions = true
+documentation = true
+examples = true
+json_schema = true
+tests = true
 
 [optimization]
 inline_small_functions = true
