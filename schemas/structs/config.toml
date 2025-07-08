@@ -1,0 +1,52 @@
+# schema/structs/config.toml
+# Top-level configuration structure composition
+
+[struct]
+name = "Config"
+description = "Complete cmdfile configuration with all sections"
+
+[fields.version]
+default = "0.1.0"
+description = "Configuration format version"
+examples = ["0.1.0", "1.0.0", "1.2.3"]
+pattern = "${common.patterns.version}"
+required = false
+type = "${common.types.string}"
+
+[fields.global]
+description = "Global settings that apply to all tasks"
+reference = "${structs.global}"
+required = false
+type = "${common.types.composite.global}"
+
+[fields.environment_variables]
+aliases = ["env_vars"]
+description = "Default environment variables for all tasks"
+examples = ["{ NODE_ENV = 'production', DEBUG = 'true' }", "{ RAILS_ENV = 'development', DATABASE_URL = 'postgres://localhost/mydb' }"]
+pattern_key = "${common.patterns.constant}"
+pattern_value = "${common.patterns.not_empty_string}"
+required = false
+type = "${common.types.optional_string_map}"
+
+[fields.variables]
+aliases = ["vars"]
+description = "Default template variables for command substitution"
+examples = ["{ project_name = 'MyProject', version = '1.0.0' }", "{ user = 'admin', path = '/usr/local/bin' }"]
+pattern_key = "${common.patterns.name}"
+pattern_value = "${common.patterns.not_empty_string}"
+required = false
+type = "${common.types.optional_string_map}"
+
+[fields.tasks]
+description = "Named task definitions"
+min_properties = 1
+pattern_key = "${common.patterns.name}"
+reference = "${structs.task}"
+required = true
+type = "${common.types.composite.task_map}"
+
+[validation]
+circular_dependencies = true
+dependency_existence = true
+unique_task_names = true
+variable_references = true

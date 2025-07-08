@@ -2,7 +2,7 @@
 # Task structure definition
 
 [struct]
-name = "Task"
+name = "task"
 description = "Individual task definition with command and configuration"
 
 [fields.command]

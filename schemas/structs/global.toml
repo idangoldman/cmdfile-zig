@@ -1,8 +1,8 @@
-# schema/structs/settings.toml
+# schema/structs/global.toml
 # Global settings structure
 
 [struct]
-name = "Global"
+name = "global"
 description = "Global default settings that apply to all tasks"
 
 [fields.environment_file]
@@ -40,21 +40,3 @@ examples = ["/bin/bash", "/bin/zsh", "/opt/homebrew/bin/fish", "C:\\Windows\\Sys
 pattern = "${common.patterns.not_empty_string}"
 required = false
 type = "${common.types.string}"
-
-[fields.environment_variables]
-aliases = ["env_vars"]
-description = "Default environment variables for all tasks"
-examples = ["{ NODE_ENV = 'production', DEBUG = 'true' }", "{ RAILS_ENV = 'development', DATABASE_URL = 'postgres://localhost/mydb' }"]
-pattern_key = "${common.patterns.constant}"
-pattern_value = "${common.patterns.not_empty_string}"
-required = false
-type = "${common.types.optional_string_map}"
-
-[fields.variables]
-aliases = ["vars"]
-description = "Default template variables for command substitution"
-examples = ["{ project_name = 'MyProject', version = '1.0.0' }", "{ user = 'admin', path = '/usr/local/bin' }"]
-pattern_key = "${common.patterns.name}"
-pattern_value = "${common.patterns.not_empty_string}"
-required = false
-type = "${common.types.optional_string_map}"

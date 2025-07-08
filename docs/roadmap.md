@@ -28,9 +28,8 @@ This roadmap presents actionable items for cmdfile development, structured by ve
 - [x] Create `schemas/structs/task.toml` with: command/cmd, description/desc, dependencies/deps, examples, confirm
 - [x] Add `default` property specifications for: confirm (false), shell (platform-specific), work_dir (".")
 - [x] Use single alias per property: command→cmd, description→desc, dependencies→deps
+- [x] Create `schemas/structs/config.toml` with: version, global, tasks, variables, environment, validation
 - [ ] Recreate `schemas/codegen/json_schema.toml` with updated properties from `schemas/structs/global.toml` and `schemas/structs/task.toml`
-- [ ] Create `schemas/structs/config.toml` with: version, settings, tasks, variables, environment
-- [ ] Create `schemas/structs/settings.toml` with: shell, work_dir, env_file properties
 
 #### Action 1.2: Implement comptime schema reader with zig-toml
 

@@ -6,14 +6,13 @@ description = "cmdfile task runner configuration schema"
 
 # Import modules - processed by schema generator
 imports = [
+    "codegen/generation.toml",
     "common/patterns.toml",
     "common/types.toml",
-    "common/defaults.toml",
-    "structs/settings.toml",
-    "structs/task.toml",
     "structs/config.toml",
-    "validation/rules.toml",
-    "codegen/generation.toml"
+    "structs/global.toml",
+    "structs/task.toml",
+    "validation/rules.toml"
 ]
 
 # Global metadata

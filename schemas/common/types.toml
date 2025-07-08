@@ -13,8 +13,8 @@ optional_string_array = "?[]string"
 string_map = "HashMap(string)"
 optional_string_map = "?HashMap(string)"
 
-# Composite types
-settings_type = "Settings"
-task_type = "Task"
-config_type = "Config"
+[types.composite]
+config = "config"
+global = "global"
+task = "task"
 task_map = "HashMap(Task)"
