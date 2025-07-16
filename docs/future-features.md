@@ -13,6 +13,7 @@
 - `[paths]` as file system monitoring
 - `[prompts]` interacts with prompts
 - `[packages]` needed for the task to run including versions and lock file
+- `[interface]` generate custom bin for the project based on TOML config
 - Plugin system for extensibility
 
 ## Task
