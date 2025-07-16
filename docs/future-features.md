@@ -7,13 +7,21 @@
 - UDP
 - gRPC
 
-## Miscellaneous
+## Core
 
-- Terminal User Interface
-- Process management
+- `[crons]` and task scheduler
 - `[paths]` as file system monitoring
+
+## Task
+
 - `arguments` and `flags` for commands passed via stdin
 - `sequence` for task execution order, ex value: `serial, parallel, pipeline, semi, and, or`
 - `os` for speficic OS commands
 - `sudo` for elevated permissions
-- `server` for listening to commands over a network
+
+## Miscellaneous
+
+- User Interface → terminal, web, graphical
+- Process management
+- Server → listening to commands over a network
+
