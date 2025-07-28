@@ -26,3 +26,11 @@ Building a Go Concurrency Task Scheduler: Efficient Task Processing Unleashed
 
 good prompts suggestions
 <https://www.tomsguide.com/ai/ive-been-using-this-one-chatgpt-prompt-for-years-it-works-in-absolutely-any-situation>
+
+
+Inspirational Tools
+makefile, rake, jake, gulpfile, justfile, taskfile
+- https://usage.jdx.dev/
+- https://mise.jdx.dev/
+
+
