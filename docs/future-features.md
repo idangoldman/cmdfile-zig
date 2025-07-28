@@ -27,6 +27,7 @@
 
 ## Miscellaneous
 
+- Task namespaces via `[task."lint:js"]` and use `[task.lint.deps] = [:js]`
 - User Interface → terminal, web, graphical
 - Process management
 - Server → listeningo  to commands over a network
