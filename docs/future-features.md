@@ -24,10 +24,10 @@
 - `sudo` for elevated permissions
 - `alias` for users mostly for shorter task name or one letter
 - `usage` for specification of the task
+- Namespaces via `[task."lint:js"]` and use `[task.lint.deps] = [:js]`
 
 ## Miscellaneous
 
-- Task namespaces via `[task."lint:js"]` and use `[task.lint.deps] = [:js]`
 - User Interface → terminal, web, graphical
 - Process management
 - Server → listeningo  to commands over a network
